@@ -1,0 +1,12 @@
+{
+  "name": "log-producer",
+  "version": "1.0.0",
+  "description": "Fake Node.js service that generates structured application logs",
+  "main": "src/log-producer.js",
+  "scripts": {
+    "start": "node src/log-producer.js"
+  },
+  "dependencies": {
+    "faker": "^5.5.3"
+  }
+}

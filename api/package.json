@@ -1,0 +1,17 @@
+{
+  "name": "log-analytics-api",
+  "version": "1.0.0",
+  "description": "Node.js API for querying and analyzing Elasticsearch logs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.11.0",
+    "fastify": "^4.25.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
