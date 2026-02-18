@@ -1,0 +1,14 @@
+filebeat.inputs:
+  - type: filestream
+    id: app-logs
+    paths:
+      - /var/log/app/*.log
+    parsers:
+      - ndjson:
+          target: ""
+          add_error_key: true
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  pipeline: "log-enrichment"
+  index: "logs-app-%{+yyyy.MM.dd}"
