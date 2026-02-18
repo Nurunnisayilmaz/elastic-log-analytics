@@ -1,0 +1,28 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "refresh_interval": "5s"
+  },
+  "mappings": {
+    "dynamic": true,
+    "properties": {
+      "@timestamp": { "type": "date" },
+
+      "level": { "type": "keyword" },
+      "service_name": { "type": "keyword" },
+      "endpoint": { "type": "keyword" },
+
+      "message": {
+        "type": "text",
+        "analyzer": "standard"
+      },
+
+      "response_time": { "type": "integer" },
+      "status_code": { "type": "integer" },
+      "user_id": { "type": "keyword" },
+
+      "severity_score": { "type": "integer" }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "description": "Pipeline for application log enrichment",
+  "processors": [
+    {
+      "date": {
+        "field": "@timestamp",
+        "formats": ["ISO8601"],
+        "ignore_failure": true
+      }
+    },
+    {
+      "script": {
+        "description": "Add severity score based on log level",
+        "lang": "painless",
+        "source": "if (ctx.level != null) { if (ctx.level == 'ERROR') { ctx.severity_score = 3; } else if (ctx.level == 'WARN') { ctx.severity_score = 2; } else { ctx.severity_score = 1; } }"
+      }
+    }
+  ]
+}
