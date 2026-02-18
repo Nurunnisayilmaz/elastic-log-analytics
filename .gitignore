@@ -1,0 +1,15 @@
+# Node
+node_modules/
+dist/
+
+# Logs
+logs/
+*.log
+
+# Docker
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
