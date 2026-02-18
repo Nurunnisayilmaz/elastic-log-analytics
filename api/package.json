@@ -1,17 +1,21 @@
 {
-  "name": "log-analytics-api",
+  "name": "analytics-api",
   "version": "1.0.0",
-  "description": "Node.js API for querying and analyzing Elasticsearch logs",
-  "main": "src/server.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "ts-node-dev src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.11.0",
-    "fastify": "^4.25.0"
+    "@elastic/elasticsearch": "^8.19.1",
+    "cors": "^2.8.5",
+    "express": "^4.22.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.0"
+    "@types/express": "^4.17.20",
+    "@types/node": "^20.4.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
   }
 }
