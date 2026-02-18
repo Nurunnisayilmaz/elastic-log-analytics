@@ -1,7 +1,93 @@
 import { Request, Response } from 'express';
 import { esClient } from '../esClient';
+import { AppLog } from '../types/log';
 
 export class LogController {
+
+  // GET /search/logs
+  static async searchLogs(req: Request, res: Response) {
+    try {
+      const {
+        service,
+        level,
+        message,
+        q,
+        lastMinutes,
+      } = req.query;
+
+      const timeRange =
+        typeof lastMinutes === 'string' && !isNaN(Number(lastMinutes))
+          ? { gte: `now-${Number(lastMinutes)}m` }
+          : undefined;
+
+      const mustQueries: any[] = [];
+
+      if (service) {
+        mustQueries.push({ term: { service_name: service } });
+      }
+
+      if (level) {
+        mustQueries.push({ term: { level } });
+      }
+
+      if (message) {
+        mustQueries.push({
+          match: {
+            message: {
+              query: message,
+              operator: 'and',
+            },
+          },
+        });
+      }
+
+      if (q) {
+        mustQueries.push({
+          multi_match: {
+            query: q,
+            fields: [
+              'message',
+              'service_name',
+              'endpoint',
+              'user_id',
+            ],
+          },
+        });
+      }
+
+      if (timeRange) {
+        mustQueries.push({
+          range: {
+            '@timestamp': timeRange,
+          },
+        });
+      }
+
+      const response = await esClient.search<AppLog>({
+        index: 'logs-app-*',
+        size: 50,
+        sort: [{ '@timestamp': 'desc' }],
+        query: {
+          bool: {
+            must: mustQueries.length ? mustQueries : [{ match_all: {} }],
+          },
+        },
+      });
+
+      const logs = response.hits.hits.map(hit => ({
+        id: hit._id,
+        ...hit._source,
+      }));
+
+      res.json({
+        count: logs.length,
+        logs,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Search failed' });
+    }
+  }
 
   // GET /search/errors?lastMinutes=60
   static async getErrors(req: Request, res: Response) {
