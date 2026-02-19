@@ -13,17 +13,28 @@ export class LogController {
         message,
         q,
         lastMinutes,
+        page,
+        pageSize,
       } = req.query;
 
-      const timeRange =
-        typeof lastMinutes === 'string' && !isNaN(Number(lastMinutes))
-          ? { gte: `now-${Number(lastMinutes)}m` }
-          : undefined;
+      const pageNumber =
+        typeof page === 'string' && Number(page) > 0 ? Number(page) : 1;
+
+      const size =
+        typeof pageSize === 'string' && Number(pageSize) > 0
+          ? Number(pageSize)
+          : 20;
+
+      const from = (pageNumber - 1) * size;
 
       const mustQueries: any[] = [];
 
       if (service) {
-        mustQueries.push({ term: { service_name: service } });
+        mustQueries.push({
+          prefix: {
+            service_name: service,
+          },
+        });
       }
 
       if (level) {
@@ -47,25 +58,27 @@ export class LogController {
             query: q,
             fields: [
               'message',
-              'service_name',
-              'endpoint',
-              'user_id',
+              'endpoint.text',
             ],
+            type: 'phrase_prefix',
           },
         });
       }
 
-      if (timeRange) {
+      if (lastMinutes) {
         mustQueries.push({
           range: {
-            '@timestamp': timeRange,
+            '@timestamp': {
+              gte: `now-${Number(lastMinutes)}m`,
+            },
           },
         });
       }
 
       const response = await esClient.search<AppLog>({
         index: 'logs-app-*',
-        size: 50,
+        from,
+        size,
         sort: [{ '@timestamp': 'desc' }],
         query: {
           bool: {
@@ -74,12 +87,21 @@ export class LogController {
         },
       });
 
+      const total =
+        typeof response.hits.total === 'number'
+          ? response.hits.total
+          : response.hits.total?.value ?? 0;
+
       const logs = response.hits.hits.map(hit => ({
         id: hit._id,
-        ...hit._source,
+        ...(hit._source as AppLog),
       }));
 
       res.json({
+        page: pageNumber,
+        pageSize: size,
+        total,
+        totalPages: Math.ceil(total / size),
         count: logs.length,
         logs,
       });

@@ -10,8 +10,22 @@
       "@timestamp": { "type": "date" },
 
       "level": { "type": "keyword" },
-      "service_name": { "type": "keyword" },
-      "endpoint": { "type": "keyword" },
+      "service_name": {
+        "type": "keyword",
+        "fields": {
+          "text": {
+            "type": "text"
+          }
+        }
+      },
+      "endpoint": {
+        "type": "keyword",
+        "fields": {
+          "text": {
+            "type": "text"
+          }
+        }
+      },
 
       "message": {
         "type": "text",
