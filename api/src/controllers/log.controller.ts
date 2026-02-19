@@ -85,6 +85,14 @@ export class LogController {
             must: mustQueries.length ? mustQueries : [{ match_all: {} }],
           },
         },
+        highlight: {
+          pre_tags: ['<mark>'],
+          post_tags: ['</mark>'],
+          fields: {
+            message: {},
+            'endpoint.text': {},
+          },
+        },
       });
 
       const total =
@@ -95,6 +103,7 @@ export class LogController {
       const logs = response.hits.hits.map(hit => ({
         id: hit._id,
         ...(hit._source as AppLog),
+        highlight: hit.highlight || {},
       }));
 
       res.json({
