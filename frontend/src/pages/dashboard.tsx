@@ -3,6 +3,7 @@ import type { AppLog } from '../types/log';
 import { searchLogs } from '../api/logs-api';
 import { SearchBar } from '../components/searchbar';
 import { LogTable } from '../components/log-table';
+import { LogDetailModal } from '../components/log-detail-modal';
 
 export function Dashboard() {
   const [logs, setLogs] = useState<AppLog[]>([]);
@@ -11,6 +12,7 @@ export function Dashboard() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
+  const [selectedLog, setSelectedLog] = useState<AppLog | null>(null);
 
   async function fetchLogs(params = searchParams, pageNum = page) {
     setLoading(true);
@@ -42,13 +44,14 @@ export function Dashboard() {
     <div>
       <SearchBar onSearch={handleSearch} />
 
-      <LogTable logs={logs} loading={loading} />
+      <LogTable
+        logs={logs}
+        loading={loading}
+        onSelectLog={setSelectedLog}
+      />
 
       <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-        <button
-          disabled={page === 1}
-          onClick={() => setPage(p => p - 1)}
-        >
+        <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>
           Prev
         </button>
 
@@ -63,6 +66,13 @@ export function Dashboard() {
           Next
         </button>
       </div>
+
+      {selectedLog && (
+        <LogDetailModal
+          log={selectedLog}
+          onClose={() => setSelectedLog(null)}
+        />
+      )}
     </div>
   );
 }

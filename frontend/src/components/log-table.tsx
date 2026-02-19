@@ -35,8 +35,8 @@ export function LogTable({ logs, loading, onSelectLog }: Props) {
               onClick={() => onSelectLog?.(log)}
             >
               <td>{new Date(log["@timestamp"]).toLocaleTimeString()}</td>
-              <td>{log.service_name}</td>
               <td>{log.level}</td>
+              <td>{log.service_name}</td>
 
               <td dangerouslySetInnerHTML={{ __html: highlightedEndpoint }} />
 
