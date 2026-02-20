@@ -1,24 +1,23 @@
 # Elastic Log Analytics
+A log analytics dashboard built with Elasticsearch, Express, Typescript and React.
 
-## Problem
+You can:
+Push logs into Elasticsearch
+Search logs by text, service, and level
+View raw log JSON in a detail modal
 
-## Solution
-
-## Features
-
-### Analytics API
-RESTful endpoints for real-time log analysis:
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/search/errors` | GET | Fetch error logs with time filtering |
-| `/api/analytics/top-endpoints` | GET | Identify most-hit endpoints |
-| `/api/analytics/slow-requests` | GET | Find requests exceeding threshold |
-| `/api/analytics/overview` | GET | Dashboard overview with aggregations |
+![alt text](image.png)
 
 ## Quick Start
 
 ### Installation & Setup
+
+# Docker Compose
+docker-compose up -d
+
+This starts:
+- **Elasticsearch**: http://localhost:9200
+- **Kibana**: http://localhost:5601
 
 # Install API dependencies
 cd api
@@ -27,17 +26,10 @@ npm install
 # Install Producer dependencies
 cd ../producer
 npm install
-cd ..
-```
 
-1. **Start infrastructure (Docker)**
-```bash
-docker-compose up -d
-```
-
-This starts:
-- **Elasticsearch**: http://localhost:9200
-- **Kibana**: http://localhost:5601
+# Install Frontend dependencies
+cd ../frontend
+npm install
 
 2. **Generate and push logs**
 
@@ -58,8 +50,14 @@ Terminal 3 - Start the Analytics API:
 cd api
 npm run dev
 ```
-
 The API will be available at: http://localhost:3000/api
+
+Terminal 4 - Start the Analytics Frontend:
+```bash
+cd frontend
+npm run dev
+```
+The Frontend will be available at: http://localhost:5173
 
 ### Usage Examples
 
@@ -81,46 +79,6 @@ GET "http://localhost:3000/api/analytics/slow-requests?threshold=1000&lastMinute
 **Get dashboard overview:**
 ```Postman
 GET "http://localhost:3000/api/analytics/overview?lastMinutes=60"
-```
-
-## Project Structure
-
-```
-elastic-log-analytics/
-├── api/                          # Express REST API
-│   ├── src/
-│   │   ├── index.ts             # Express server setup
-│   │   ├── esClient.ts          # Elasticsearch client configuration
-│   │   ├── controllers/
-│   │   │   └── log.controller.ts # Analytics endpoints
-│   │   └── routes/
-│   │       └── log.route.ts     # Route definitions
-│   └── package.json
-│
-├── producer/                     # Log generation & ingestion
-│   ├── src/
-│   │   ├── index.ts             # Main producer loop
-│   │   ├── logger.ts            # Fake log generation
-│   │   ├── esPush.ts            # Push logs to Elasticsearch
-│   │   └── types.ts             # TypeScript type definitions
-│   └── package.json
-│
-├── elastic/                      # Elasticsearch configuration
-│   ├── mapping.json             # Index mapping template
-│   ├── ingest-pipeline.json     # Log enrichment pipeline
-│   └── ilm-policy.json          # Lifecycle policy
-│
-├── filebeat/                     # Filebeat configuration
-│   └── filebeat.yml             # Filebeat config
-│
-├── kibana/                       # Kibana configuration
-│   └── dashboards.ndjson        # Pre-built dashboards
-│
-├── logs/                         # Generated logs directory
-│   └── app.log                  # Application logs file
-│
-├── docker-compose.yml           # Container orchestration
-└── README.md                    # This file
 ```
 
 ## Configuration
