@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import type { AppLog } from '../types/log';
-import { searchLogs } from '../api/logs-api';
-import { SearchBar } from '../components/searchbar';
-import { LogTable } from '../components/log-table';
-import { LogDetailModal } from '../components/log-detail-modal';
+import { useEffect, useState } from "react";
+import type { AppLog } from "../types/log";
+import { searchLogs } from "../api/logs-api";
+import { SearchBar } from "../components/searchbar";
+import { LogTable } from "../components/log-table";
+import { LogDetailModal } from "../components/log-detail-modal";
 
 export function Dashboard() {
   const [logs, setLogs] = useState<AppLog[]>([]);
@@ -41,30 +41,34 @@ export function Dashboard() {
   }, [page]);
 
   return (
-    <div>
-      <SearchBar onSearch={handleSearch} />
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <SearchBar onSearch={handleSearch} />
 
-      <LogTable
-        logs={logs}
-        loading={loading}
-        onSelectLog={setSelectedLog}
-      />
+        <div style={tableWrapperStyle}>
+          <LogTable
+            logs={logs}
+            loading={loading}
+            onSelectLog={setSelectedLog}
+          />
+        </div>
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-        <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>
-          Prev
-        </button>
+        <div style={paginationStyle}>
+          <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
+            Prev
+          </button>
 
-        <span>
-          Page {page} / {totalPages}
-        </span>
+          <span>
+            Page {page} / {totalPages}
+          </span>
 
-        <button
-          disabled={page === totalPages}
-          onClick={() => setPage(p => p + 1)}
-        >
-          Next
-        </button>
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {selectedLog && (
@@ -76,3 +80,37 @@ export function Dashboard() {
     </div>
   );
 }
+
+const pageStyle: React.CSSProperties = {
+  minHeight: '100vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  paddingTop: 40,
+};
+
+const containerStyle: React.CSSProperties = {
+  width: '100%',
+  maxWidth: 1200,
+  background: '#1e1e1e',
+  padding: 16,
+  borderRadius: 12,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 16,
+};
+
+const tableWrapperStyle: React.CSSProperties = {
+  flex: 1,
+  maxHeight: '60vh',
+  overflow: 'auto',
+  border: '1px solid #333',
+  borderRadius: 8,
+};
+
+const paginationStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
+  gap: 12,
+  alignItems: 'center',
+};
